@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chatroom</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<body>
+    <div id="chat-messages"></div>
+    <input type="text" id="message-input" placeholder="Type a message...">
+    <button id="send-btn">Send</button>
+
+    <script>
+        const chatSocket = new WebSocket('ws://localhost:8000/ws/chat/');
+
+        chatSocket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            $('#chat-messages').append('<div>' + data.message + '</div>');
+        };
+
+        $('#send-btn').click(function() {
+            const messageInputDom = document.querySelector('#message-input');
+            const message = messageInputDom.value;
+            chatSocket.send(JSON.stringify({
+                'message': message
+            }));
+            messageInputDom.value = '';
+        });
+    </script>
+</body>
+</html>
